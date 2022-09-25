@@ -16,7 +16,9 @@ namespace RpgTask.Races
         public int Health { get; set; }
         public int Mana { get; set; }
         public int Damage { get; set; }
-        public string Symbol { get; set; } = "◙";
+        public string Symbol { get; set; } = "M";
+        public int Row { get; set; } = new Random().Next(0, 10);
+        public int Col { get; set; } = new Random().Next(0, 11);
 
         public void AddPoints()
         {

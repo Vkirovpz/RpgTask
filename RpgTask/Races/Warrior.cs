@@ -17,6 +17,8 @@ namespace RpgTask.Races
         public int Mana { get; set; }
         public int Damage { get; set; }
         public string Symbol { get; set; } = "@";
+        public int Row { get; set; } = 1;
+        public int Col { get; set; } = 1;
 
         public void AddPoints()
         {

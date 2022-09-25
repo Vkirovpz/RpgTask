@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using RpgTask.Creatures;
 using RpgTask.Data.RpgDbContext;
+using RpgTask.Races;
 using RpgTask.Services;
 using System.Text;
 
@@ -14,9 +15,11 @@ public class Program
     static int[,] matrix;
 
     static int PlayerDirection = 0;
-    static int PlayerColumn = 1; // column
-    static int PlayerRow = 1; // row
+    //static int PlayerColumn = 1; // column
+    //static int PlayerRow = 1; // row
     static IHero player = null;
+    static IHero monster = null;
+    static List<IHero> Monsters = new List<IHero>();
     static void PrintMenuSb(string input)
     {
         var sb = new StringBuilder();
@@ -188,22 +191,22 @@ public class Program
             }
         }
         SetGameField();
-        WritePlayerPosition(PlayerColumn, PlayerRow, player.Symbol);
+        WritePlayerPosition(player.Col, player.Row, player.Symbol);
 
         while (true)
         {
             ConsoleKeyInfo key = Console.ReadKey(true);
             ChangePlayerDirection(key);
-            DeletePlayerOldPosition(PlayerColumn, PlayerRow, '▒');
+            DeletePlayerOldPosition(player.Col, player.Row, '▒');
 
             MovePlayer();
+            
+            monster = HeroCreator.getHero("monster");
+            Monsters.Add(monster);
 
-            WritePlayerPosition(PlayerColumn, PlayerRow, player.Symbol);
+            WritePlayerPosition(player.Col, player.Row, player.Symbol);
 
-            Random rnd = new Random();
-            int monsterCol = rnd.Next(0, 11);
-            int monsterRow = rnd.Next(0, 10);
-            SetMonsterPosition(monsterCol, monsterRow, 'M');
+            SetMonsterPosition(monster.Col, monster.Row, monster.Symbol);
         }
     }
 
@@ -221,21 +224,21 @@ public class Program
     }
     static void MovePlayer()
     {
-        if (PlayerDirection == right && PlayerColumn <= matrix.GetLength(0) - 1)
+        if (PlayerDirection == right && player.Col <= matrix.GetLength(0) - 1)
         {
-            PlayerColumn++;
+            player.Col++;
         }
-        if (PlayerDirection == left && PlayerColumn > 0)
+        if (PlayerDirection == left && player.Col > 0)
         {
-            PlayerColumn--;
+            player.Col--;
         }
-        if (PlayerDirection == up && PlayerRow > 0)
+        if (PlayerDirection == up && player.Row > 0)
         {
-            PlayerRow--;
+            player.Row--;
         }
-        if (PlayerDirection == down && PlayerRow <= matrix.GetLength(0) - 2)
+        if (PlayerDirection == down && player.Row <= matrix.GetLength(0) - 2)
         {
-            PlayerRow++;
+            player.Row++;
         }
     }
 
@@ -268,9 +271,9 @@ public class Program
         Console.SetCursorPosition(x, y);
         Console.Write(ch);
     }
-    static void SetMonsterPosition(int x, int y, char ch)
+    static void SetMonsterPosition(int x, int y, string ch)
     {
-        if (x != PlayerColumn || y != PlayerRow)
+        if (x != player.Col || y != player.Row)
         {
             Console.SetCursorPosition(x, y);
             Console.Write(ch);
